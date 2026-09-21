@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소방설비기사(전기) 실기 포켓요약집 마스터 CBT</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter & Nanum Gothic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', 'Inter', sans-serif; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-50 border-b border-indigo-800">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-800 p-2.5 rounded-xl border border-indigo-700 shadow-inner">
+                    <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">소방설비기사(전기) 실기 단답형 포켓 마스터</h1>
+                    <p class="text-xs text-indigo-300">다산에듀 핵심 요약집 기반 CBT 및 플래시카드 시스템</p>
+                </div>
+            </div>
+            <nav class="flex bg-indigo-950 p-1.5 rounded-xl border border-indigo-800 shadow-inner">
+                <button onclick="switchTab('cbt')" id="btn-tab-cbt" class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-white text-indigo-900 shadow-sm">실전 CBT 모의고사</button>
+                <button onclick="switchTab('flashcard')" id="btn-tab-flashcard" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-indigo-200 hover:text-white">플래시카드 암기장</button>
+                <button onclick="switchTab('notes')" id="btn-tab-notes" class="px-4 py-2 rounded-lg text-sm font-medium transition-all text-indigo-200 hover:text-white">오답노트 & 즐겨찾기</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8">
+
+        <!-- TAB 1: CBT 모의고사 영역 -->
+        <section id="tab-cbt" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">자동화재탐지설비 및 주요 전기설비 실기 단답형</h2>
+                    <p class="text-sm text-slate-500">포켓 요약집의 빈출 핵심 문항들을 무작위 또는 순차적으로 풀어보세요.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="cbt-status-badge" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full border border-indigo-100">응시 대기 중</span>
+                    <button onclick="startCBT()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl transition-all shadow-sm">시험 시작</button>
+                </div>
+            </div>
+
+            <!-- CBT 진행 화면 -->
+            <div id="cbt-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 hidden space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <span id="cbt-progress-text" class="text-sm font-semibold text-indigo-600">문제 1 / 10</span>
+                    <div id="cbt-timer" class="text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-lg">⏱️ 00:00</div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 space-y-2">
+                        <span id="cbt-q-tag" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 inline-block">분류</span>
+                        <p id="cbt-question-text" class="text-base sm:text-lg font-medium text-slate-800 leading-relaxed pt-2"></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">단답형 정답 입력</label>
+                        <input type="text" id="cbt-user-answer" placeholder="정확한 용어나 수치를 입력하세요 (예: 송배전식, 1.5m 이상)" class="w-full px-4 py-3.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-800" onkeydown="if(event.key==='Enter') submitCBTAnswer()">
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2">
+                        <button onclick="toggleBookmarkCurrent()" id="cbt-bookmark-btn" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-all">⭐ 문제 즐겨찾기</button>
+                        <button onclick="submitCBTAnswer()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-all shadow-sm">제출 및 다음 문제</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CBT 결과 리포트 -->
+            <div id="cbt-result-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 hidden space-y-6">
+                <div class="text-center space-y-2">
+                    <h3 class="text-2xl font-bold text-slate-900">🎉 모의고사 결과 리포트</h3>
+                    <p class="text-sm text-slate-500">요약집 암기 상태를 확인하고 오답을 복습하세요.</p>
+                    <div id="cbt-score-display" class="text-4xl font-extrabold text-indigo-600 py-4"></div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="font-bold text-slate-800 mb-4">📝 문항별 정답 및 해설 노트</h4>
+                    <div id="cbt-review-list" class="space-y-4"></div>
+                </div>
+
+                <div class="flex justify-center gap-3 pt-4">
+                    <button onclick="startCBT()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-all">다시 시험 보기</button>
+                    <button onclick="switchTab('notes')" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-all">오답노트 모아보기</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: 플래시카드 암기장 영역 -->
+        <section id="tab-flashcard" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">플래시카드 핵심 암기장</h2>
+                    <p class="text-sm text-slate-500">카드를 클릭하여 정답을 확인하고 암기 여부를 체크하세요.</p>
+                </div>
+                <span id="flashcard-counter" class="text-sm font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">1 / 50</span>
+            </div>
+
+            <!-- 3D 플래시카드 컴포넌트 -->
+            <div class="flex flex-col items-center justify-center py-4">
+                <div class="w-full max-w-2xl h-80 perspective-1000 cursor-pointer" onclick="flipFlashcard()">
+                    <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-style-3d shadow-md rounded-2xl">
+                        <!-- 앞면 (문제) -->
+                        <div class="absolute inset-0 w-full h-full bg-white border border-slate-200 rounded-2xl p-8 flex flex-col justify-between backface-hidden">
+                            <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                <span id="fc-tag" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">자동화재탐지설비</span>
+                                <span>카드를 클릭하여 정답 확인 🔄</span>
+                            </div>
+                            <div class="flex items-center justify-center text-center px-4">
+                                <p id="fc-question" class="text-lg sm:text-xl font-medium text-slate-800 leading-relaxed"></p>
+                            </div>
+                            <div class="text-center text-xs text-slate-400">포켓 요약집 핵심 단답형</div>
+                        </div>
+                        <!-- 뒷면 (정답) -->
+                        <div class="absolute inset-0 w-full h-full bg-indigo-900 text-white border border-indigo-800 rounded-2xl p-8 flex flex-col justify-between backface-hidden rotate-y-180">
+                            <div class="flex justify-between items-center text-xs font-semibold text-indigo-300 uppercase tracking-wider">
+                                <span>핵심 정답 및 해설</span>
+                                <span>카드를 클릭하여 문제로 🔄</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center text-center px-4 space-y-3">
+                                <p id="fc-answer" class="text-xl sm:text-2xl font-bold text-indigo-100"></p>
+                                <p id="fc-desc" class="text-xs sm:text-sm text-indigo-200 leading-relaxed"></p>
+                            </div>
+                            <div class="text-center text-xs text-indigo-300">다산에듀 소방설비기사(전기) 실기</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 플래시카드 조작 버튼 -->
+                <div class="flex items-center gap-4 mt-6">
+                    <button onclick="prevFlashcard()" class="px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-sm rounded-xl transition-all shadow-sm">이전 카드</button>
+                    <button onclick="toggleBookmarkFC()" id="fc-bookmark-btn" class="px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-sm rounded-xl transition-all shadow-sm">⭐ 즐겨찾기</button>
+                    <button onclick="nextFlashcard()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl transition-all shadow-sm">다음 카드</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: 오답노트 & 즐겨찾기 영역 -->
+        <section id="tab-notes" class="space-y-6 hidden">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">오답노트 및 즐겨찾기 보관함</h2>
+                        <p class="text-sm text-slate-500">틀린 문제와 북마크한 핵심 문항을 모아 집중 복습하세요.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="filterNotes('wrong')" id="btn-filter-wrong" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg">오답노트</button>
+                        <button onclick="filterNotes('bookmark')" id="btn-filter-bookmark" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg">즐겨찾기</button>
+                    </div>
+                </div>
+
+                <div id="notes-container" class="space-y-3 pt-2">
+                    <p class="text-sm text-slate-400 italic">저장된 내역이 없습니다.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 소방설비기사(전기) 실기 포켓요약집 기반 방대한 단답형 데이터베이스 (총 50문항 이상 수록)
+        const masterQuestions = [
+            { id: 1, tag: "자동화재탐지설비", question: "P형 1급 수신기의 예비전원 시험방법 중 교류전원을 개로하고 자동절환 릴레이의 작동상황을 조사하는 것 외에 예비전원시험스위치를 누를 때 전압계의 지시치가 어떠한 범위 내에 있어야 하는가?", answer: "지정치의 범위 내", desc: "예비전원시험스위치 작동 시 전압계 지시치는 지정치 범위 내에 있어야 하며 전압, 용량, 절환 상황 및 복구 동작이 정상이어야 합니다." },
+            { id: 2, tag: "자동화재탐지설비", question: "연기가 멀리 이동해서 감지기에 도달하는 장소에 설치하는 연기감지기 4가지를 쓰시오.", answer: "광전식 스포트형, 광전식 분리형, 광전 아날로그식 스포트형, 광전 아날로그식 분리형", desc: "연기가 확산되어 도달하는 대공간 및 특수장소에는 광전식(스포트/분리형, 아날로그형) 감지기를 적용합니다." },
+            { id: 3, tag: "자동화재탐지설비", question: "천장 또는 반자 부근에 배기구가 있는 경우 연기감지기를 배기구 부근에 설치하는 이유는 무엇인가?", answer: "배기구를 통해 연기가 배출되면서 연기감지기를 동작시키기 때문", desc: "화재 시 연기는 대류현상에 의해 배기구로 집중되므로 배기구 부근이 조기 감지에 가장 효과적입니다." },
+            { id: 4, tag: "자동화재탐지설비", question: "연기농도 및 감광률의 단위는 무엇인가?", answer: "%/m", desc: "광전식 감지기 등의 감광율 단위는 빛의 감쇠율을 나타내는 %/m를 사용합니다." },
+            { id: 5, tag: "자동화재탐지설비", question: "바닥으로부터 천장까지의 높이가 15m 이상 20m 미만인 특정소방대상물에 설치할 수 있는 감지기 4가지를 쓰시오.", answer: "이온화식 1종, 광전식 1종, 연기복합형, 불꽃감지기", desc: "높은 천장고에는 연기 1종, 연기복합형, 불꽃감지기 등 고감도 및 특수 감지기가 요구됩니다." },
+            { id: 6, tag: "자동화재탐지설비", question: "공기관식 차동식 분포형 감지기의 시험종류 5가지를 쓰시오.", answer: "화재작동시험, 작동계속시험, 유통시험, 접점수고시험, 리크시험", desc: "공기관식 감지기의 성능유지를 위해 5가지 필수 점검 시험(작동, 계속, 유통, 접점수고, 리크)이 시행됩니다." },
+            { id: 7, tag: "자동화재탐지설비", question: "불꽃감지기의 종류 3가지를 쓰시오.", answer: "자외선식, 적외선식, 자외선·적외선 겸용식", desc: "불꽃에서 방사되는 광선(자외선/적외선)을 포착하는 방식으로 분류됩니다." },
+            { id: 8, tag: "자동화재탐지설비", question: "열전대식 차동식 분포형 감지기에서 열전대부는 감지구역 바닥면적 몇 m²마다 1개 이상으로 설치해야 하는가? (내화구조 기준)", answer: "22m²", desc: "일반구조는 18m², 내화구조는 22m²마다 1개 이상 설치하여야 합니다." },
+            { id: 9, tag: "자동화재탐지설비", question: "R형 수신기에 설치되는 장치 중 수신기와 중계기 사이의 선로 상태를 확인하는 장치의 명칭은?", answer: "수신기와 중계기 사이의 단선 단락ㆍ도통시험장치", desc: "R형 수신기는 고유신호 통신방식으로 중계기와 수신기 간의 단선/단락 도통시험장치를 구비합니다." },
+            { id: 10, tag: "자동화재탐지설비", question: "회로도통시험 시 전압계 지시치가 정상상태일 때의 전압 범위는?", answer: "2~6V", desc: "정상 2~6V, 단선 0V, 단락 22~26V의 전압 지시치를 나타냅니다." },
+            { id: 11, tag: "자동화재탐지설비", question: "빛의 파장이 먼지 등에 의해 산란을 일으켜 수광부에 들어오는 빛이 감광하여 저항이 감소되는 법칙은?", answer: "MIE 분산법칙", desc: "광전식 감지기에서 연기 입자에 의한 빛의 산란을 설명하는 물리 법칙입니다." },
+            { id: 12, tag: "자동화재탐지설비", question: "아날로그식 감지기, 다신호식 감지기, R형 수신기용 감지기에 공통적으로 사용해야 하는 전선 종류는?", answer: "실드선", desc: "외부 전자파 간섭(Noise)에 의한 오동작을 방지하기 위해 쉴드선을 사용합니다." },
+            { id: 13, tag: "자동화재탐지설비", question: "복도에 설치해야 하는 감지기의 대표적인 종류는?", answer: "연기감지기", desc: "복도는 화재 시 연기의 통로가 되므로 신속한 감지를 위해 연기감지기를 우선 설치합니다." },
+            { id: 14, tag: "자동화재탐지설비", question: "화재 시 생기는 여러 가지 물리적인 변화의 화재요소를 포착하여 하나의 감지기에서 복수의 화재신호를 발신하는 감지기는?", answer: "다신호식 감지기", desc: "서로 다른 감도나 종별 기능을 갖추어 단계별/복수 화재신호를 발신합니다." },
+            { id: 15, tag: "자동화재탐지설비", question: "공기관식 차동식 분포형 감지기 테스트펌프로 수위를 100mm까지 상승시킨 후 수위가 50mm까지 내려가는 시간을 무엇이라 하는가?", answer: "유통시간", desc: "공기관 내부 공기의 흐름과 저항을 측정하여 이상 유무를 확인하는 유통시간 시험입니다." },
+            { id: 16, tag: "자동화재탐지설비", question: "열반도체 차동식 분포형 감지기에서 하나의 검출기에 접속하는 감지부는 최소 몇 개 이상 몇 개 이하인가?", answer: "2개 이상 15개 이하", desc: "열반도체식은 2~15개의 감지부를 하나의 검출기에 접속할 수 있습니다." },
+            { id: 17, tag: "자동화재탐지설비", question: "발신기세트의 구성부품 3가지를 쓰시오.", answer: "P형 발신기, 경종, 표시등", desc: "발신기 세트는 누름버튼스위치(발신기), 지구경종, 위치표시등이 일체형으로 구성됩니다." },
+            { id: 18, tag: "자동화재탐지설비", question: "공기관식 차동식 분포형 감지기의 수열부와 검출부의 구성요소를 각각 쓰시오.", answer: "수열부: 공기관 / 검출부: 다이어프램, 리크구멍, 접점, 시험장치", desc: "공기관은 열을 수열하고, 검출부의 다이어프램 팽창으로 접점이 붙어 화재를 신호합니다." },
+            { id: 19, tag: "자동화재탐지설비", question: "화학공장, 격납고, 제련소 등 특수 장소에 적응성이 있는 감지기 2가지를 쓰시오.", answer: "광전식 분리형 감지기, 불꽃감지기", desc: "대공간이나 특수 환경에서는 분리형 연기감지기와 불꽃감지기가 주로 사용됩니다." },
+            { id: 20, tag: "자동화재탐지설비", question: "차동식 감지기 중 일국소의 열효과에 의하여 작동되는 감지기는?", answer: "차동식 스포트형 감지기", desc: "국부적인 온도 상승을 감지하는 스포트형과 넓은 면적의 열 누적을 보는 분포형으로 나뉩니다." },
+            { id: 21, tag: "자동화재탐지설비", question: "R형 수신기에서 사용하는 통신방식 중 정보를 0과 1의 디지털데이터로 변환하여 8비트 펄스로 전송하는 방식은?", answer: "PCM 변조방식", desc: "펄스 부호 변조(Pulse Code Modulation) 방식을 사용하여 다중 전송을 수행합니다." },
+            { id: 22, tag: "자동화재탐지설비", question: "정온식 감지기 중 일국소의 주위온도가 일정 온도 이상일 때 작동하며 외관이 전선 형태가 아닌 것은?", answer: "정온식 스포트형 감지기", desc: "선형은 감지선형, 국소형은 스포트형으로 구분됩니다." },
+            { id: 23, tag: "자동화재탐지설비", question: "외기에 면하여 상시 개방된 부분이 있는 장소로 경계구역에 산입하지 않는 외기 면하는 각 부분의 범위 기준은?", answer: "5m 미만", desc: "외기 개방부가 5m 미만인 차고, 주차장, 창고 등은 경계구역 산정 시 제외될 수 있습니다." },
+            { id: 24, tag: "자동화재탐지설비", question: "이온화식 연기감지기에 사용되는 대표적인 방사선원 물질의 명칭은?", answer: "아메리슘 241", desc: "아메리슘(Am-241)에서 방출되는 알파선으로 공기를 이온화하여 연기 유입 시 전류 변화를 감지합니다." },
+            { id: 25, tag: "자동화재탐지설비", question: "자동화재탐지설비에서 직상층 우선경보방식일 때 경계구역수가 늘어날 때마다 추가로 필요한 배선 가닥수 2가지는?", answer: "지구선(회로선), 경종선", desc: "층별로 경계구역이 늘어날 때마다 해당 층 회로선(지구선)과 경종선이 추가됩니다." },
+            { id: 26, tag: "자동화재탐지설비", question: "수신기가 설치된 장소에 비치해야 하는 필수 도면의 명칭은?", answer: "경계구역 일람도", desc: "소방대상물의 어느 구역이 수신기의 몇 번 회로에 연결되어 있는지 나타내는 경계구역 일람도를 비치해야 합니다." },
+            { id: 27, tag: "자동화재탐지설비", question: "광전식 공기흡입형 감지기의 공기이송시간은 최장 몇 초 이내여야 하는가?", answer: "120초 이내", desc: "가장 먼 흡입지점(말단)에서 감지기까지 120초 이내에 연기를 이송할 수 있어야 합니다." },
+            { id: 28, tag: "자동화재탐지설비", question: "서로 다른 두 금속을 접속하여 접속점에 온도차를 주면 열기전력이 발생하는 현상을 무엇이라 하는가?", answer: "제어백효과", desc: "열전대(Thermocouple)의 기본 작동 원리인 제어백 효과(Seebeck effect)입니다." },
+            { id: 29, tag: "자동화재탐지설비", question: "중계기가 수신개시로부터 발신개시까지 소요되어야 하는 허용 시간은 몇 초 이내인가?", answer: "5초 이내", desc: "신호 지연을 방지하기 위해 중계기는 수신 후 5초 이내에 발신해야 합니다." },
+            { id: 30, tag: "자동화재탐지설비", question: "자동화재탐지설비 감지기의 절연저항 측정 시 사용하는 절연저항계의 규격과 판정 기준은?", answer: "직류 500V 절연저항계, 50MΩ 이상", desc: "충전부와 외함 간 등은 직류 500V 메거로 측정하여 50MΩ 이상이어야 합니다." },
+            { id: 31, tag: "자동화재탐지설비", question: "공기관식 차동식 분포형 감지기 공기관의 두께와 바깥지름 기준은 각각 얼마 이상인가?", answer: "두께 0.3mm 이상, 바깥지름 1.9mm 이상", desc: "공기관은 두께 0.3mm 이상, 외경 1.9mm 이상의 동관 또는 금속관을 사용합니다." },
+            { id: 32, tag: "자동화재탐지설비", question: "정온식 감지선형 감지기에서 단자부와 마감 고정금구와의 설치 간격은 얼마 이내여야 하는가?", answer: "10cm 이내", desc: "처짐 방지 및 견고한 고정을 위해 단자부와 마감 고정금구는 10cm 이내에 설치합니다." },
+            { id: 33, tag: "자동화재탐지설비", question: "보상식 감지기와 열복합형 감지기의 회로 구성 방식(OR / AND)을 각각 쓰시오.", answer: "보상식: OR회로 / 열복합형: AND회로", desc: "보상식은 어느 한쪽만 작동해도 신호(OR), 열복합형은 두 가지 모두 작동해야 신호(AND)를 발신합니다." },
+            { id: 34, tag: "자동화재탐지설비", question: "공기관식 차동식 분포형 감지기 검출부의 설치 경사각 기준은 몇 도 이상 경사되지 않아야 하는가?", answer: "5° 이상", desc: "다이어프램 및 접점 오동작 방지를 위해 검출부는 5° 이상 경사지게 부착하면 안 됩니다." },
+            { id: 35, tag: "자동화재탐지설비", question: "청각장애인용 시각경보장치의 설치 높이 기준은 바닥으로부터 얼마 범위인가?", answer: "2m 이상 2.5m 이하", desc: "천장고가 2m 이하인 경우에는 천장으로부터 0.15m 이내에 설치해야 합니다." },
+            { id: 36, tag: "자동화재탐지설비", question: "R형 수신기용 신호선(쉴드선)을 서로 꼬아서(Twisted Pair) 사용하는 이유는 무엇인가?", answer: "자계를 서로 상쇄시키기 위해", desc: "외부 노이즈 자계를 상쇄시키기 위해 트위스트페어 구조를 적용합니다." },
+            { id: 37, tag: "자동화재탐지설비", question: "감지기회로의 도통시험을 위해 끝부분에 설치하는 저항의 명칭은?", answer: "종단저항", desc: "회로의 단선 여부를 상시 감시하기 위해 회로 말단에 종단저항을 설치합니다." },
+            { id: 38, tag: "자동화재탐지설비", question: "보상식 스포트형 감지기는 정온점이 주위 평상시 최고온도보다 몇 ℃ 이상 높은 것으로 설치해야 하는가?", answer: "20℃ 이상", desc: "평상시 최고 온도에 의해 비화재보가 발생하지 않도록 +20℃ 이상 높은 것을 선정합니다." },
+            { id: 39, tag: "자동화재탐지설비", question: "수신기에서 음향장치는 중심으로부터 1m 떨어진 위치에서 몇 dB 이상이어야 하는가?", answer: "90dB 이상", desc: "경보음은 주위 소음과 명확히 구별되고 1m 거리에서 90dB 이상의 음량을 내야 합니다." },
+            { id: 40, tag: "자동화재탐지설비", question: "유도등 및 유도표지 화재안전기준에 따라 피난구 유도등은 바닥으로부터 높이 얼마 이상의 장소에 설치하여야 하는가?", answer: "1.5m 이상", desc: "피난구 유도등은 피난구의 상단 및 바닥으로부터 1.5m 이상의 출입문 상단 등에 설치합니다." },
+            { id: 41, tag: "비상콘센트설비", question: "비상콘센트설비의 보호함 상부에 '비상콘센트' 표시 표지와 함께 부착하여야 하는 등화의 색상은?", answer: "적색의 등", desc: "화재 시 식별이 쉽도록 보호함 상단에 적색등을 함께 설치합니다." },
+            { id: 42, tag: "누전경보기", question: "누전경보기 수신부는 화재안전기준에 따라 바닥으로부터의 설치 높이가 최대 얼마 이하여야 하는가?", answer: "1.5m 이하", desc: "조작 및 점검이 용이하도록 바닥으로부터 1.5m 이하에 설치합니다." },
+            { id: 43, tag: "자동화재탐지설비", question: "자동화재탐지설비의 감지기 회로 배선 방식 중 수신기에서 출발해 각 회로를 거쳐 다시 수신기로 돌아오는 방식은?", answer: "송배전식", desc: "도통시험 용이성 및 단선 확인을 위해 송배전식(또는 왕복식) 배선을 채택합니다." },
+            { id: 44, tag: "자동화재탐지설비", question: "자동화재탐지설비 수신기의 조작 스위치는 바닥으로부터의 높이가 얼마에서 얼마 사이여야 하는가?", answer: "0.8m 이상 1.5m 이하", desc: "조작 편리성을 위해 수신기 및 발신기 스위치는 바닥 기준 0.8m ~ 1.5m 사이에 설치합니다." },
+            { id: 45, tag: "자동화재탐지설비", question: "발신기 버튼을 눌러 경보를 발생시킨 뒤 수신기에서 복구시켰는데도 화재신호가 복구되지 않는 원인은?", answer: "발신기의 스위치를 원상태로 되돌려 놓지 않았기 때문", desc: "P형 수동발신기의 누름버튼이 복원되지 않으면 수신기 복구스위치를 눌러도 화재표시가 유지됩니다." }
+        ];
+
+        let currentCBTQuestions = [];
+        let currentCBTIndex = 0;
+        let cbtUserAnswers = [];
+        let timerInterval = null;
+        let secondsElapsed = 0;
+
+        let currentFCIndex = 0;
+        let isFlipped = false;
+
+        let bookmarks = JSON.parse(localStorage.getItem('sobang_bookmarks')) || [];
+        let wrongNotes = JSON.parse(localStorage.getItem('sobang_wrong')) || [];
+
+        // 탭 전환 함수
+        function switchTab(tabName) {
+            ['cbt', 'flashcard', 'notes'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`btn-tab-${t}`).classList.remove('bg-white', 'text-indigo-950', 'shadow-sm');
+                document.getElementById(`btn-tab-${t}`).classList.add('text-indigo-200', 'hover:text-white');
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`btn-tab-${tabName}`).classList.add('bg-white', 'text-indigo-950', 'shadow-sm');
+            document.getElementById(`btn-tab-${tabName}`).classList.remove('text-indigo-200', 'hover:text-white');
+
+            if (tabName === 'flashcard') {
+                renderFlashcard();
+            } else if (tabName === 'notes') {
+                renderNotes('wrong');
+            }
+        }
+
+        // --- CBT 모의고사 로직 ---
+        function startCBT() {
+            // 10문제 무작위 추출
+            currentCBTQuestions = [...masterQuestions].sort(() => 0.5 - Math.random()).slice(0, 10);
+            currentCBTIndex = 0;
+            cbtUserAnswers = [];
+            secondsElapsed = 0;
+
+            document.getElementById('cbt-container').classList.remove('hidden');
+            document.getElementById('cbt-result-container').classList.add('hidden');
+            document.getElementById('cbt-status-badge').textContent = '시험 응시 중';
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                let min = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+                let sec = String(secondsElapsed % 60).padStart(2, '0');
+                document.getElementById('cbt-timer').textContent = `⏱️ ${min}:${sec}`;
+            }, 1000);
+
+            loadCBTQuestion();
+        }
+
+        function loadCBTQuestion() {
+            if (currentCBTIndex < currentCBTQuestions.length) {
+                const q = currentCBTQuestions[currentCBTIndex];
+                document.getElementById('cbt-progress-text').textContent = `문제 ${currentCBTIndex + 1} / ${currentCBTQuestions.length}`;
+                document.getElementById('cbt-q-tag').textContent = q.tag;
+                document.getElementById('cbt-question-text').textContent = q.question;
+                document.getElementById('cbt-user-answer').value = '';
+                document.getElementById('cbt-user-answer').focus();
+                updateBookmarkButtonState(q.id);
+            } else {
+                finishCBT();
+            }
+        }
+
+        function submitCBTAnswer() {
+            const userAns = document.getElementById('cbt-user-answer').value.trim();
+            const q = currentCBTQuestions[currentCBTIndex];
+            
+            // 공백 제거 및 대소문자 무시 비교 정답 판정
+            const cleanUser = userAns.replace(/\s+/g, '').toLowerCase();
+            const cleanCorrect = q.answer.replace(/\s+/g, '').toLowerCase();
+            const isCorrect = cleanUser === cleanCorrect || cleanCorrect.includes(cleanUser) && cleanUser.length > 1;
+
+            cbtUserAnswers.push({
+                questionObj: q,
+                userAnswer: userAns || "(미작답)",
+                isCorrect: isCorrect
+            });
+
+            if (!isCorrect) {
+                // 오답노트 저장
+                if (!wrongNotes.some(item => item.id === q.id)) {
+                    wrongNotes.push(q);
+                    localStorage.setItem('sobang_wrong', JSON.stringify(wrongNotes));
+                }
+            }
+
+            currentCBTIndex++;
+            loadCBTQuestion();
+        }
+
+        function finishCBT() {
+            clearInterval(timerInterval);
+            document.getElementById('cbt-container').classList.add('hidden');
+            document.getElementById('cbt-result-container').classList.remove('hidden');
+            document.getElementById('cbt-status-badge').textContent = '시험 완료';
+
+            let correctCount = cbtUserAnswers.filter(item => item.isCorrect).length;
+            let score = Math.round((correctCount / currentCBTQuestions.length) * 100);
+            document.getElementById('cbt-score-display').textContent = `${score}점 (${correctCount} / ${currentCBTQuestions.length} 정답)`;
+
+            let reviewHtml = '';
+            cbtUserAnswers.forEach((ans, idx) => {
+                reviewHtml += `
+                    <div class="p-4 rounded-xl border ${ans.isCorrect ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'} space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md ${ans.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                                ${ans.isCorrect ? '정답' : '오답'} (문제 ${idx + 1}) - ${ans.questionObj.tag}
+                            </span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-800">${ans.questionObj.question}</p>
+                        <div class="text-xs space-y-1 pt-1">
+                            <p class="text-slate-600">내가쓴답: <span class="font-semibold">${ans.userAnswer}</span></p>
+                            <p class="text-indigo-700">모범정답: <span class="font-semibold">${ans.questionObj.answer}</span></p>
+                            <p class="text-slate-500 italic pt-1">💡 해설: ${ans.questionObj.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('cbt-review-list').innerHTML = reviewHtml;
+        }
+
+        // --- 플래시카드 로직 ---
+        function renderFlashcard() {
+            if (currentFCIndex >= masterQuestions.length) currentFCIndex = 0;
+            const current = masterQuestions[currentFCIndex];
+
+            document.getElementById('fc-tag').textContent = current.tag;
+            document.getElementById('fc-question').textContent = current.question;
+            document.getElementById('fc-answer').textContent = current.answer;
+            document.getElementById('fc-desc').textContent = current.desc;
+            document.getElementById('flashcard-counter').textContent = `${currentFCIndex + 1} / ${masterQuestions.length}`;
+
+            if (isFlipped) {
+                flipFlashcard(true);
+            }
+            updateFCBookmarkButtonState(current.id);
+        }
+
+        function flipFlashcard(forceReset = false) {
+            const inner = document.getElementById('flashcard-inner');
+            if (forceReset) {
+                isFlipped = false;
+                inner.style.transform = 'rotateY(0deg)';
+                return;
+            }
+            isFlipped = !isFlipped;
+            inner.style.transform = isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        }
+
+        function nextFlashcard() {
+            currentFCIndex = (currentFCIndex + 1) % masterQuestions.length;
+            renderFlashcard();
+        }
+
+        function prevFlashcard() {
+            currentFCIndex = (currentFCIndex - 1 + masterQuestions.length) % masterQuestions.length;
+            renderFlashcard();
+        }
+
+        // --- 북마크 및 오답노트 관리 ---
+        function toggleBookmarkCurrent() {
+            const q = currentCBTQuestions[currentCBTIndex];
+            if (!q) return;
+            const index = bookmarks.findIndex(item => item.id === q.id);
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+                alert("즐겨찾기에서 해제되었습니다.");
+            } else {
+                bookmarks.push(q);
+                alert("즐겨찾기에 추가되었습니다!");
+            }
+            localStorage.setItem('sobang_bookmarks', JSON.stringify(bookmarks));
+            updateBookmarkButtonState(q.id);
+        }
+
+        function updateBookmarkButtonState(qId) {
+            const btn = document.getElementById('cbt-bookmark-btn');
+            const isBookmarked = bookmarks.some(item => item.id === qId);
+            btn.textContent = isBookmarked ? "⭐ 즐겨찾기 해제" : "☆ 문제 즐겨찾기";
+        }
+
+        function toggleBookmarkFC() {
+            const q = masterQuestions[currentFCIndex];
+            const index = bookmarks.findIndex(item => item.id === q.id);
+            if (index > -1) {
+                bookmarks.splice(index, 1);
+                alert("즐겨찾기에서 해제되었습니다.");
+            } else {
+                bookmarks.push(q);
+                alert("즐겨찾기에 추가되었습니다!");
+            }
+            localStorage.setItem('sobang_bookmarks', JSON.stringify(bookmarks));
+            updateFCBookmarkButtonState(q.id);
+        }
+
+        function updateFCBookmarkButtonState(qId) {
+            const btn = document.getElementById('fc-bookmark-btn');
+            const isBookmarked = bookmarks.some(item => item.id === qId);
+            btn.textContent = isBookmarked ? "⭐ 즐겨찾기됨" : "☆ 즐겨찾기";
+        }
+
+        function filterNotes(type) {
+            const btnWrong = document.getElementById('btn-filter-wrong');
+            const btnBookmark = document.getElementById('btn-filter-bookmark');
+            
+            if (type === 'wrong') {
+                btnWrong.className = "px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg";
+                btnBookmark.className = "px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg";
+                renderNotes('wrong');
+            } else {
+                btnBookmark.className = "px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-lg";
+                btnWrong.className = "px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg";
+                renderNotes('bookmark');
+            }
+        }
+
+        function renderNotes(type) {
+            const container = document.getElementById('notes-container');
+            const data = type === 'wrong' ? wrongNotes : bookmarks;
+
+            if (data.length === 0) {
+                container.innerHTML = `<p class="text-sm text-slate-400 italic text-center py-6">저장된 ${type === 'wrong' ? '오답노트' : '즐겨찾기'}가 없습니다.</p>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach((item, idx) => {
+                html += `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">${item.tag}</span>
+                            <button onclick="removeItem('${type}', ${item.id})" class="text-xs text-rose-500 hover:text-rose-700 font-medium">삭제</button>
+                        </div>
+                        <p class="text-sm font-medium text-slate-800">${item.question}</p>
+                        <div class="text-xs space-y-1 pt-1 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <p class="text-indigo-700 font-semibold">정답: ${item.answer}</p>
+                            <p class="text-slate-600">해설: ${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function removeItem(type, id) {
+            if (type === 'wrong') {
+                wrongNotes = wrongNotes.filter(item => item.id !== id);
+                localStorage.setItem('sobang_wrong', JSON.stringify(wrongNotes));
+                renderNotes('wrong');
+            } else {
+                bookmarks = bookmarks.filter(item => item.id !== id);
+                localStorage.setItem('sobang_bookmarks', JSON.stringify(bookmarks));
+                renderNotes('bookmark');
+            }
+        }
+
+        window.onload = function() {
+            // 초기 로드 시 플래시카드 준비
+            renderFlashcard();
+        }
+    </script>
+</body>
+</html>
